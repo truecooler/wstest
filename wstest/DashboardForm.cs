@@ -12,24 +12,43 @@ namespace wstest
 {
     public partial class DashboardForm : Form
     {
-        private AuthForm mainForm = null;
-        public DashboardForm(Form callingForm)
+        public DashboardForm(string login)
         {
-            mainForm =(AuthForm) callingForm;
             InitializeComponent();
+            this.label3.Text = login;
         }
         
         private void button1_Click(object sender, EventArgs e)
         {
-           // MessageBox.Show(((Form1)mainForm).conn.ConnectionString);
-            //mainForm.conn.Close();
-            this.Hide();
-            mainForm.Show();
+            //обработчик кнопки выхода с аккаунта
+            //просто создаем новую форму авторизации, и закрываем текущее окно
+            this.Close();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void DashboardForm_Load(object sender, EventArgs e)
+        {
+            //обработчик загрузки формы
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Globals.MysqlQuery.CommandText = "SELECT * FROM users;";
+            Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
+
+            /* создаем класс, в котором мы будем хранить принятую таблицу от базы 
+             * (база данных всегда возвращает запрос ввиде новой таблицы) */
+            DataTable tb = new DataTable();
+            /* загружаем данные из sql ридера в наш класс */
+            tb.Load(Globals.MysqlDataReader);
+            /* задаем элементу dataGridView на форме данные, который хранит в себе новоиспеченный DataTable */
+            this.dataGridView1.DataSource = tb;
+            //каждый раз, работая с ридером, его нужно закрывать
+            Globals.MysqlDataReader.Close();
         }
     }
 }

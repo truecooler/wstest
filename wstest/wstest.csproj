@@ -61,6 +61,7 @@
     <Compile Include="DashboardForm.Designer.cs">
       <DependentUpon>DashboardForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Globals.cs" />
     <Compile Include="RegForm.cs">
       <SubType>Form</SubType>
     </Compile>
