@@ -17,7 +17,7 @@ namespace wstest
         {
             InitializeComponent();
         }
-        string connStr = "server=192.168.10.169;user=cooler;database=ws;password=pass;";
+        string connStr = "server=vpn.thecooler.ru;user=cooler;database=ws;password=pass;";
         public MySqlConnection conn;
         public MySqlCommand command;
         public MySqlDataReader reader;
