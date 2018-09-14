@@ -29,36 +29,46 @@ namespace wstest
                 string login = textBox1.Text;
                 int age = Convert.ToInt32(textBox3.Text);
                 string password = textBox2.Text;
-                Globals.MysqlQuery.CommandText = $"INSERT INTO users (name,age,password) VALUES ('{login}','{age}','{password}');";
-
-                /* этот вариант реализует защиту от sql инъекций, но он портит читаемость
-                 * нам пока рано решать вопросы безопасности, так что не будем использовать этот способ
-                 */
-                //mainForm.command.Parameters.AddWithValue("name", login);
-                //mainForm.command.Parameters.AddWithValue("age", age);
-                //mainForm.command.Parameters.AddWithValue("password", password);
-
-
-                /*
-                 * выполняем запрос на изменение данных в бд
-                 * rowsAffected будет хранить количество затронутых строк
-                 * если мы затронули хотя бы одну строку, то данные успешно занесены в бд
-                 * 
-                 */
-                int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
-                //mainForm.command.Parameters.Clear();
-                if (rowsAffected == 0)
+                Globals.MysqlQuery.CommandText = $"select * from users where name = '{login}';";
+                if (Globals.MysqlDataReader.HasRows)
                 {
-                    MessageBox.Show("Ошибка, зарегистрироваться не удалось");
+                    Globals.MysqlDataReader.Close();
+                    MessageBox.Show("Данный логин уже занят, напишите другой");
                 }
                 else
                 {
-                    MessageBox.Show("Вы успешно зарегистрировались! Вы можете авторизоваться с новыми данными.");
-                    
-                    this.Close();
+                    Globals.MysqlQuery.CommandText = $"INSERT INTO users (name,age,password) VALUES ('{login}','{age}','{password}');";
 
+                    /* этот вариант реализует защиту от sql инъекций, но он портит читаемость
+                     * нам пока рано решать вопросы безопасности, так что не будем использовать этот способ
+                     */
+                    //mainForm.command.Parameters.AddWithValue("name", login);
+                    //mainForm.command.Parameters.AddWithValue("age", age);
+                    //mainForm.command.Parameters.AddWithValue("password", password);
+
+
+                    /*
+                     * выполняем запрос на изменение данных в бд
+                     * rowsAffected будет хранить количество затронутых строк
+                     * если мы затронули хотя бы одну строку, то данные успешно занесены в бд
+                     * 
+                     */
+                    int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
+                    //mainForm.command.Parameters.Clear();
+                    if (rowsAffected == 0)
+                    {
+                        MessageBox.Show("Ошибка, зарегистрироваться не удалось");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Вы успешно зарегистрировались! Вы можете авторизоваться с новыми данными.");
+
+                        this.Close();
+
+                    }
                 }
-            }
+                }
+            
             catch (MySqlException ex)
             {
                 MessageBox.Show("Ошибка: " + ex.ToString());
@@ -70,7 +80,7 @@ namespace wstest
              * введет какую-нибудь дрянь вместо возраста, например строку
              * программа кинет исключение, этот обработчик его словит
              */
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show("Ошибка: " + ex.ToString());
             }
