@@ -39,9 +39,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(17, 93);
+            this.button1.Location = new System.Drawing.Point(50, 129);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(153, 23);
+            this.button1.Size = new System.Drawing.Size(237, 70);
             this.button1.TabIndex = 0;
             this.button1.Text = "Зарегистрируйте меня!";
             this.button1.UseVisualStyleBackColor = true;
@@ -60,14 +60,14 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(70, 6);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.Size = new System.Drawing.Size(257, 20);
             this.textBox1.TabIndex = 2;
             // 
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(70, 32);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.Size = new System.Drawing.Size(257, 20);
             this.textBox2.TabIndex = 4;
             // 
             // label2
@@ -83,7 +83,7 @@
             // 
             this.textBox3.Location = new System.Drawing.Point(70, 58);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 20);
+            this.textBox3.Size = new System.Drawing.Size(257, 20);
             this.textBox3.TabIndex = 6;
             // 
             // label3
@@ -99,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(245, 151);
+            this.ClientSize = new System.Drawing.Size(339, 211);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox2);

@@ -115,5 +115,10 @@ namespace wstest
                 //нам пока не нужно выполнять тут код
             }
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
