@@ -23,6 +23,7 @@ namespace wstest
          * пользователя */
         private void button1_Click(object sender, EventArgs e)
         {
+			//текст который должен попасть на гитхаб
             //обработчик кнопки регистрации
             try
             {
