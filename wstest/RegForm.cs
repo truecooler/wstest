@@ -29,7 +29,7 @@ namespace wstest
                 string login = textBox1.Text;
                 int age = Convert.ToInt32(textBox3.Text);
                 string password = textBox2.Text;
-                Globals.MysqlQuery.CommandText = $"seelect * from users where name = '{login}';";
+                Globals.MysqlQuery.CommandText = $"select * from users where name = '{login}';";
                 if (Globals.MysqlDataReader.HasRows)
                 {
                     Globals.MysqlDataReader.Close();
