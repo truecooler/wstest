@@ -33,7 +33,7 @@ namespace wstest
                 if (Globals.MysqlDataReader.HasRows)
                 {
                     Globals.MysqlDataReader.Close();
-                    MessageBox.Show("Дданный логин уже занят, напишите другой");
+                    MessageBox.Show("Данный логин уже занят, напишите другой");
                 }
                 else
                 {
