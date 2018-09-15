@@ -80,12 +80,22 @@ namespace wstest
         {
             try
             {
-                /*
+				/*
                  * подключение к бд. 
                  * создаем экземпляр MySqlConnection, через который мы будем взаимодействовать в бд
-                 * передаем туда наши настройки в виде строки
+                 * передаем туда наши настройки в виде экземпляра MySqlConnectionStringBuilder.
+				 * его же мы настраиваем, выдавая значение каждому параметру отдельно.
+				 * это более наглядно и удобно, посравнению со старым способом в виде обычной строки
                  */
-                Globals.MysqlConnection = new MySqlConnection(Globals.MysqlConnectionSettingsString);
+
+				Globals.MysqlConnectionSettings = new MySqlConnectionStringBuilder();
+				Globals.MysqlConnectionSettings.Server = HomeMode ? "192.168.10.7" : "vpn.thecooler.ru"; //это нужно для меня, потом объясню почему и что это
+				Globals.MysqlConnectionSettings.UserID = "cooler";
+				Globals.MysqlConnectionSettings.Database = "ws";
+				Globals.MysqlConnectionSettings.Password = textBox3.Text;
+
+
+				Globals.MysqlConnection = new MySqlConnection(Globals.MysqlConnectionSettings.ToString());
                 /* открываем соединение */
                 this.button3.Text = "Соединяемся с бд...";
                 /* выполняем подключение асинхронно, что бы не блокировать
@@ -120,5 +130,26 @@ namespace wstest
         {
 
         }
-    }
+
+		private void AuthForm_Load(object sender, EventArgs e)
+		{
+
+		}
+
+		static bool HomeMode = false;
+		private void AuthForm_DoubleClick(object sender, EventArgs e)
+		{
+			if (HomeMode == false)
+			{
+				this.Text += " / адрес перенаправлен на 192.168.10.7";
+				HomeMode = true;
+			}
+			else
+			{
+				this.Text =  this.Text.Replace(" / адрес перенаправлен на 192.168.10.7","");
+				HomeMode = false;
+			}
+
+		}
+	}
 }

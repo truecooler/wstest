@@ -23,7 +23,6 @@ namespace wstest
          * пользователя */
         private void button1_Click(object sender, EventArgs e)
         {
-			//текст который должен попасть на гитхаб
             //обработчик кнопки регистрации
             try
             {
@@ -31,14 +30,16 @@ namespace wstest
                 int age = Convert.ToInt32(textBox3.Text);
                 string password = textBox2.Text;
                 Globals.MysqlQuery.CommandText = $"select * from users where name = '{login}';";
+				Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
                 if (Globals.MysqlDataReader.HasRows)
                 {
-                    Globals.MysqlDataReader.Close();
-                    MessageBox.Show("Данный логин уже занят, напишите другой");
+					Globals.MysqlDataReader.Close();
+					MessageBox.Show("Данный логин уже занят, напишите другой");
+					return;
                 }
-                else
-                {
-                    Globals.MysqlQuery.CommandText = $"INSERT INTO users (name,age,password) VALUES ('{login}','{age}','{password}');";
+				Globals.MysqlDataReader.Close();
+
+				Globals.MysqlQuery.CommandText = $"INSERT INTO users (name,age,password) VALUES ('{login}','{age}','{password}');";
 
                     /* этот вариант реализует защиту от sql инъекций, но он портит читаемость
                      * нам пока рано решать вопросы безопасности, так что не будем использовать этот способ
@@ -67,7 +68,7 @@ namespace wstest
                         this.Close();
 
                     }
-                }
+                
                 }
             
             catch (MySqlException ex)
