@@ -63,7 +63,6 @@ namespace wstest
             catch (MySqlException ex)
             {
                 MessageBox.Show("Ошибка: " + ex.ToString());
-                Globals.MysqlConnection.Close();
             }
         }
 
@@ -80,6 +79,23 @@ namespace wstest
         {
             try
             {
+
+				/*
+				 * проверка на необходимость сохранения пароля в хранилище
+				 * что бы не вводить пароль от mysql каждый раз
+				 * когда форма запускается, срабатывает обработчик Form.OnLoad,
+				 * который считывает пароль из хранилища и вводит его в поле автоматически
+				 */
+
+				if (checkBox1.Checked)
+				{
+					//кладем значение из поля в хранилище по ключу
+					Properties.Settings.Default["cooler_super_secret"] = textBox3.Text;
+					//сохраняем хранилище
+					Properties.Settings.Default.Save();
+				}
+
+
 				/*
                  * подключение к бд. 
                  * создаем экземпляр MySqlConnection, через который мы будем взаимодействовать в бд
@@ -93,6 +109,7 @@ namespace wstest
 				Globals.MysqlConnectionSettings.UserID = "cooler";
 				Globals.MysqlConnectionSettings.Database = "ws";
 				Globals.MysqlConnectionSettings.Password = textBox3.Text;
+				Globals.MysqlConnectionSettings.CharacterSet = "utf8";
 
 
 				Globals.MysqlConnection = new MySqlConnection(Globals.MysqlConnectionSettings.ToString());
@@ -114,11 +131,17 @@ namespace wstest
                 //MessageBox.Show("Успех");
 
             }
-            catch (MySqlException ex)
+            catch (MySqlException ex) //ловим исключение от mysql
             {
-                MessageBox.Show("Ошибка: " + ex.ToString());
-                Globals.MysqlConnection.Close();
+				this.button3.Text = "Подключиться не удалось, попробуйте снова";
+
+				MessageBox.Show("Ошибка: " + ex.ToString());
             }
+			catch (Exception ex) //ловим все остальные исключения
+			{
+				this.button3.Text = "Подключиться не удалось, попробуйте снова";
+				MessageBox.Show("Ошибка: " + ex.ToString());
+			}
             finally
             {
                 //в этом блоке описывается код, который выполнится в любом случае, после отлова исключения, или успешного выполнения
@@ -133,7 +156,8 @@ namespace wstest
 
 		private void AuthForm_Load(object sender, EventArgs e)
 		{
-
+			//подгружаем пароль из хранилища в текстовое поле
+			textBox3.Text = Properties.Settings.Default["cooler_super_secret"].ToString();
 		}
 
 		static bool HomeMode = false;
@@ -141,12 +165,12 @@ namespace wstest
 		{
 			if (HomeMode == false)
 			{
-				this.Text += " / адрес перенаправлен на 192.168.10.7";
+				this.Text += " / server: at 192.168.10.7";
 				HomeMode = true;
 			}
 			else
 			{
-				this.Text =  this.Text.Replace(" / адрес перенаправлен на 192.168.10.7","");
+				this.Text =  this.Text.Replace(" / server at: 192.168.10.7", "");
 				HomeMode = false;
 			}
 

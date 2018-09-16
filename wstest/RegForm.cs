@@ -18,9 +18,8 @@ namespace wstest
             InitializeComponent();
         }
 
-        /*TODO: Задание для Вадима: сделай проверку на наличие пользователя в бд
-         * прежде, чем занести его в бд. в противном случае, в бд заноситься 2 одинаковых
-         * пользователя */
+        /*TODO: Новое задание для Вадима: сделай проверку всех полей на пустоту при регистрации
+		 * если ничего не заполнить, в бд просто добавиться пустая запись, а это не хорошо */
         private void button1_Click(object sender, EventArgs e)
         {
             //обработчик кнопки регистрации
@@ -39,8 +38,11 @@ namespace wstest
                 }
 				Globals.MysqlDataReader.Close();
 
-				Globals.MysqlQuery.CommandText = $"INSERT INTO users (name,age,password) VALUES ('{login}','{age}','{password}');";
+				//Globals.MysqlQuery.CommandText = "INSERT INTO `ws`.`users` (`name`, `age`, `password`, `position`) VALUES ('ку2', '123', '111', 'Клиент');";
 
+				Globals.MysqlQuery.CommandText = $"INSERT INTO users (name,age,password,position) VALUES ('{login}','{age}','{password}','Клиент');";
+
+				//MessageBox.Show(Globals.MysqlQuery.CommandText);
                     /* этот вариант реализует защиту от sql инъекций, но он портит читаемость
                      * нам пока рано решать вопросы безопасности, так что не будем использовать этот способ
                      */
@@ -74,7 +76,6 @@ namespace wstest
             catch (MySqlException ex)
             {
                 MessageBox.Show("Ошибка: " + ex.ToString());
-                Globals.MysqlConnection.Close();
             }
 
             /*
