@@ -19,12 +19,12 @@ namespace wstest
             InitializeComponent();
         }
         
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonLogin_Click(object sender, EventArgs e)
         {
             try
             {
-                string login = textBox1.Text; //кладем логин из текст бокса в переменную
-                string password = textBox2.Text; //аналогично выше, только для пароля
+                string login = textBoxLogin.Text; //кладем логин из текст бокса в переменную
+                string password = textBoxPass.Text; //аналогично выше, только для пароля
 
                 /* задаем запрос для базы данных */
             Globals.MysqlQuery.CommandText = $"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'";
@@ -66,7 +66,7 @@ namespace wstest
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void buttonOpenRegisterForm_Click(object sender, EventArgs e)
         {
             this.Hide();
             RegForm form = new RegForm();
@@ -75,7 +75,7 @@ namespace wstest
             
         }
 
-        private async void button3_Click(object sender, EventArgs e)
+        private async void buttonMysqlConnect_Click(object sender, EventArgs e)
         {
             try
             {
@@ -87,10 +87,10 @@ namespace wstest
 				 * который считывает пароль из хранилища и вводит его в поле автоматически
 				 */
 
-				if (checkBox1.Checked)
+				if (checkBoxNeedToRemember.Checked)
 				{
 					//кладем значение из поля в хранилище по ключу
-					Properties.Settings.Default["cooler_super_secret"] = textBox3.Text;
+					Properties.Settings.Default["cooler_super_secret"] = textBoxMysqlPass.Text;
 					//сохраняем хранилище
 					Properties.Settings.Default.Save();
 				}
@@ -108,38 +108,38 @@ namespace wstest
 				Globals.MysqlConnectionSettings.Server = HomeMode ? "192.168.10.7" : "vpn.thecooler.ru"; //это нужно для меня, потом объясню почему и что это
 				Globals.MysqlConnectionSettings.UserID = "cooler";
 				Globals.MysqlConnectionSettings.Database = "ws";
-				Globals.MysqlConnectionSettings.Password = textBox3.Text;
+				Globals.MysqlConnectionSettings.Password = textBoxMysqlPass.Text;
 				Globals.MysqlConnectionSettings.CharacterSet = "utf8";
 
 
 				Globals.MysqlConnection = new MySqlConnection(Globals.MysqlConnectionSettings.ToString());
                 /* открываем соединение */
-                this.button3.Text = "Соединяемся с бд...";
+                this.buttonMysqlConnect.Text = "Соединяемся с бд...";
                 /* выполняем подключение асинхронно, что бы не блокировать
                  * окно приложения 
                  */
                 await Globals.MysqlConnection.OpenAsync();
-                this.button3.Text = "Соединение с бд установлено!";
+                this.buttonMysqlConnect.Text = "Соединение с бд установлено!";
                 //создаем экземпляр MySqlCommand. он тоже нужен для нашей работы. 
                 //первый параметр: запрос к бд(в данном случае примитивный, который ничего не делает)
                 //второй: экземпляр соединения с бд
                 Globals.MysqlQuery = new MySqlCommand("select 1", Globals.MysqlConnection);
 
                 /* делаем кнопки авторизации и регистрации доступными для нажатия */
-                button1.Enabled = true;
-                button2.Enabled = true;
+                buttonLogin.Enabled = true;
+                buttonOpenRegisterForm.Enabled = true;
                 //MessageBox.Show("Успех");
 
             }
             catch (MySqlException ex) //ловим исключение от mysql
             {
-				this.button3.Text = "Подключиться не удалось, попробуйте снова";
+				this.buttonMysqlConnect.Text = "Подключиться не удалось, попробуйте снова";
 
 				MessageBox.Show("Ошибка: " + ex.ToString());
             }
 			catch (Exception ex) //ловим все остальные исключения
 			{
-				this.button3.Text = "Подключиться не удалось, попробуйте снова";
+				this.buttonMysqlConnect.Text = "Подключиться не удалось, попробуйте снова";
 				MessageBox.Show("Ошибка: " + ex.ToString());
 			}
             finally
@@ -157,7 +157,7 @@ namespace wstest
 		private void AuthForm_Load(object sender, EventArgs e)
 		{
 			//подгружаем пароль из хранилища в текстовое поле
-			textBox3.Text = Properties.Settings.Default["cooler_super_secret"].ToString();
+			textBoxMysqlPass.Text = Properties.Settings.Default["cooler_super_secret"].ToString();
 		}
 
 		static bool HomeMode = false;
@@ -175,5 +175,6 @@ namespace wstest
 			}
 
 		}
+
 	}
 }

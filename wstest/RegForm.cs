@@ -20,28 +20,28 @@ namespace wstest
 
         /*TODO: Новое задание для Вадима: сделай проверку всех полей на пустоту при регистрации
 		 * если ничего не заполнить, в бд просто добавиться пустая запись, а это не хорошо */
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonRegister_Click(object sender, EventArgs e)
         {
             //обработчик кнопки регистрации
             try
             {
 
-                if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "") 
+                if (textBoxLogin.Text == "" || textBoxPass.Text == "" || textBoxAge.Text == "") 
                 {
                     throw new Exception("Заполните все поля");
                     //return;
                 }
 
 
-                if (textBox1.Text.Contains(" ") || textBox2.Text.Contains(" ") || textBox3.Text.Contains(" "))
+                if (textBoxLogin.Text.Contains(" ") || textBoxPass.Text.Contains(" ") || textBoxAge.Text.Contains(" "))
                 {
                     throw new Exception("Пробелы использовать нельзя");
                     //return;
                 }
 
-                string login = textBox1.Text;
-                int age = Convert.ToInt32(textBox3.Text);
-                string password = textBox2.Text;
+                string login = textBoxLogin.Text;
+                int age = Convert.ToInt32(textBoxAge.Text);
+                string password = textBoxPass.Text;
                 Globals.MysqlQuery.CommandText = $"select * from users where name = '{login}';";
 				Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
                 if (Globals.MysqlDataReader.HasRows)
@@ -103,5 +103,7 @@ namespace wstest
             }
 
         }
-    }
+
+
+	}
 }
