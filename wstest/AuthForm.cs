@@ -165,7 +165,7 @@ namespace wstest
 		{
 			if (HomeMode == false)
 			{
-				this.Text += " / server: at 192.168.10.7";
+				this.Text += " / server at: 192.168.10.7";
 				HomeMode = true;
 			}
 			else
