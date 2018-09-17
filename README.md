@@ -1,5 +1,7 @@
 # wstest
 example project for passing first stage of WorldSkills competition(software solutions for business direction)
+Примерный проект для прохождения отборочного этапа WorldSkills по направлению "Программные решения для бизнеса"
+
 
 TODO list:
 - [ ] Сделать функционал запоминания пароля и логина 
