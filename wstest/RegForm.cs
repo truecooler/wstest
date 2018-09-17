@@ -25,6 +25,20 @@ namespace wstest
             //обработчик кнопки регистрации
             try
             {
+
+                if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "") 
+                {
+                    throw new Exception("Заполните все поля");
+                    //return;
+                }
+
+
+                if (textBox1.Text.Contains(" ") || textBox2.Text.Contains(" ") || textBox3.Text.Contains(" "))
+                {
+                    throw new Exception("Пробелы использовать нельзя");
+                    //return;
+                }
+
                 string login = textBox1.Text;
                 int age = Convert.ToInt32(textBox3.Text);
                 string password = textBox2.Text;
