@@ -22,20 +22,35 @@ namespace wstest
         private void buttonLogin_Click(object sender, EventArgs e)
         {
             try
+            { 
+                
+                if (checkBox1.Checked)
             {
+                    //кладем значение из поля в хранилище по ключу
+                    Properties.Settings.Default["login"] = textBoxLogin.Text;
+                    Properties.Settings.Default["password"] = textBoxPass.Text;
+                //сохраняем хранилищеss
+                Properties.Settings.Default.Save();
+            }
+
                 string login = textBoxLogin.Text; //кладем логин из текст бокса в переменную
                 string password = textBoxPass.Text; //аналогично выше, только для пароля
 
                 /* задаем запрос для базы данных */
             Globals.MysqlQuery.CommandText = $"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'";
                 /* выполняем запрос */
+                
                 Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
 
                 /* проверяем, вернула ли база данных хоть одну строку */
                 if (Globals.MysqlDataReader.HasRows)
                 {
+
+                
                     Globals.MysqlDataReader.Close();
                     //MessageBox.Show("Авторизация успешна");
+                    Globals.MysqlQuery.CommandText = "INSERT  logs select (user_id) from users (id);";
+                    int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
 
                     /* создаем экемпляр формы*/
                     DashboardForm form = new DashboardForm(login);
@@ -90,7 +105,7 @@ namespace wstest
 				if (checkBoxNeedToRemember.Checked)
 				{
 					//кладем значение из поля в хранилище по ключу
-					Properties.Settings.Default["cooler_super_secret"] = textBoxMysqlPass.Text;
+					Properties.Settings.Default["sqlpass"] = textBoxMysqlPass.Text;
 					//сохраняем хранилище
 					Properties.Settings.Default.Save();
 				}
@@ -120,16 +135,17 @@ namespace wstest
                  */
                 await Globals.MysqlConnection.OpenAsync();
                 this.buttonMysqlConnect.Text = "Соединение с бд установлено!";
+                
+
                 //создаем экземпляр MySqlCommand. он тоже нужен для нашей работы. 
                 //первый параметр: запрос к бд(в данном случае примитивный, который ничего не делает)
                 //второй: экземпляр соединения с бд
                 Globals.MysqlQuery = new MySqlCommand("select 1", Globals.MysqlConnection);
-
+                
                 /* делаем кнопки авторизации и регистрации доступными для нажатия */
                 buttonLogin.Enabled = true;
                 buttonOpenRegisterForm.Enabled = true;
                 //MessageBox.Show("Успех");
-
             }
             catch (MySqlException ex) //ловим исключение от mysql
             {
@@ -157,7 +173,9 @@ namespace wstest
 		private void AuthForm_Load(object sender, EventArgs e)
 		{
 			//подгружаем пароль из хранилища в текстовое поле
-			textBoxMysqlPass.Text = Properties.Settings.Default["cooler_super_secret"].ToString();
+			textBoxMysqlPass.Text = Properties.Settings.Default["sqlpass"].ToString();
+            textBoxLogin.Text = Properties.Settings.Default["login"].ToString();
+            textBoxPass.Text = Properties.Settings.Default["password"].ToString();
 		}
 
 		static bool HomeMode = false;
@@ -175,6 +193,5 @@ namespace wstest
 			}
 
 		}
-
-	}
+    }
 }
