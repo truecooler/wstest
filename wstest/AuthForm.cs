@@ -18,68 +18,81 @@ namespace wstest
 
             InitializeComponent();
         }
-        
+
         private void buttonLogin_Click(object sender, EventArgs e)
         {
             try
-            { 
-                
-                if (checkBox1.Checked)
             {
+
+                if (checkBox1.Checked)
+                {
                     //кладем значение из поля в хранилище по ключу
                     Properties.Settings.Default["login"] = textBoxLogin.Text;
                     Properties.Settings.Default["password"] = textBoxPass.Text;
-                //сохраняем хранилищеss
-                Properties.Settings.Default.Save();
-            }
-
+                    //сохраняем хранилищеss
+                    Properties.Settings.Default.Save();
+                }
                 string login = textBoxLogin.Text; //кладем логин из текст бокса в переменную
                 string password = textBoxPass.Text; //аналогично выше, только для пароля
 
                 /* задаем запрос для базы данных */
-            Globals.MysqlQuery.CommandText = $"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'";
+                Globals.MysqlQuery.CommandText = $"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'";
                 /* выполняем запрос */
-                
+
                 Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
 
-                /* проверяем, вернула ли база данных хоть одну строку */
-                if (Globals.MysqlDataReader.HasRows)
-                {
+                DataTable tb = new DataTable();
+                /* загружаем данные из sql ридера в наш класс */
+                tb.Load(Globals.MysqlDataReader);
 
-                
+                if (tb.Rows.Count == 1)
+                {
+                    int user_id = (int)tb.Rows[0][0];
+
+
                     Globals.MysqlDataReader.Close();
                     //MessageBox.Show("Авторизация успешна");
-                    Globals.MysqlQuery.CommandText = "INSERT  logs select (user_id) from users (id);";
+                    Globals.MysqlQuery.CommandText = $"insert into logs (time,user_id,event) values (NOW(),'{user_id}','Вход');";
                     int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
+                    //mainForm.command.Parameters.Clear();
+                    if (rowsAffected == 0)
+                    {
+                        MessageBox.Show("Ошибка логирования, попробуйте еще раз пизда");
+                    }
+                    else
+                    {
 
-                    /* создаем экемпляр формы*/
-                    DashboardForm form = new DashboardForm(login);
+                        /* создаем экемпляр формы*/
+                        DashboardForm form = new DashboardForm(login, user_id);
 
-                    /* прячем окно авторизации */
-                    this.Hide();
+                        /* прячем окно авторизации */
+                        this.Hide();
 
-                    /* показываем новую форму. как только новое окно закроется, управление 
-                     * передастся на this.Show(); */
-                    form.ShowDialog();
-                    this.Show();
+                        /* показываем новую форму. как только новое окно закроется, управление 
+                         * передастся на this.Show(); */
+                        form.ShowDialog();
+                        this.Show();
+                    }
 
-                    /* закрываем эту, она нам пока больше не нужна */
-                   
                 }
+                /* закрываем эту, она нам пока больше не нужна */
+
                 else
                 {
-                    
                     MessageBox.Show("Неверный логин или пароль");
                     Globals.MysqlDataReader.Close();
                 }
-                
 
-            }
+
+
+
+                }
             catch (MySqlException ex)
             {
                 MessageBox.Show("Ошибка: " + ex.ToString());
             }
         }
+
 
         private void buttonOpenRegisterForm_Click(object sender, EventArgs e)
         {

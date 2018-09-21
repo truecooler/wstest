@@ -12,23 +12,30 @@ namespace wstest
 {
     public partial class DashboardForm : Form
     {
-        public DashboardForm(string login)
+        int user_id = 0;
+        public DashboardForm(string login,int user_id)
         {
             InitializeComponent();
             this.label3.Text = login;
+            this.user_id = user_id;
+            
         }
-        
         private void button1_Click(object sender, EventArgs e)
         {
-            //обработчик кнопки выхода с аккаунта
-            //просто создаем новую форму авторизации, и закрываем текущее окно
-            this.Close();
+                Globals.MysqlQuery.CommandText = $"insert into logs (time,user_id,event) values (NOW(),'{this.user_id}','Выход');";
+                int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
+                if (rowsAffected == 0)
+                {
+                    MessageBox.Show("Ошибка выхода, попробуйте еще раз");
+                }
+                else
+                {    //обработчик кнопки выхода с аккаунта
+                    //просто создаем новую форму авторизации, и закрываем текущее окно
+                    this.Close();
+                }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
 
-        }
 
         private void DashboardForm_Load(object sender, EventArgs e)
         {

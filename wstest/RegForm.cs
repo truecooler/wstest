@@ -22,6 +22,7 @@ namespace wstest
 		 * если ничего не заполнить, в бд просто добавиться пустая запись, а это не хорошо */
         private void buttonRegister_Click(object sender, EventArgs e)
         {
+            
             //обработчик кнопки регистрации
             try
             {
