@@ -14,7 +14,7 @@ namespace wstest
 
 		static public void MysqlLog(int userid,string type)
 		{
-			MySqlCommand MysqlQuery = new MySqlCommand($"insert into logs (time,user_id,event) values (NOW(),'{userid}','Вход');", MysqlConnection);
+			MySqlCommand MysqlQuery = new MySqlCommand($"insert into logs (time,user_id,event) values (NOW(),'{userid}','{type}');", MysqlConnection);
 
 			int rowsAffected = MysqlQuery.ExecuteNonQuery();
 
