@@ -15,84 +15,53 @@ namespace wstest
     {
         public AuthForm()
         {
-
             InitializeComponent();
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            try
-            {
+			try
+			{
+				if (checkBox1.Checked)
+				{
+					Properties.Settings.Default["login"] = textBoxLogin.Text;
+					Properties.Settings.Default["password"] = textBoxPass.Text;
+					Properties.Settings.Default.Save();
+				}
+				string login = textBoxLogin.Text; 
+				string password = textBoxPass.Text; 
 
-                if (checkBox1.Checked)
-                {
-                    //кладем значение из поля в хранилище по ключу
-                    Properties.Settings.Default["login"] = textBoxLogin.Text;
-                    Properties.Settings.Default["password"] = textBoxPass.Text;
-                    //сохраняем хранилищеss
-                    Properties.Settings.Default.Save();
-                }
-                string login = textBoxLogin.Text; //кладем логин из текст бокса в переменную
-                string password = textBoxPass.Text; //аналогично выше, только для пароля
+				/* задаем запрос для базы данных */
+				MySqlCommand MysqlQuery = new MySqlCommand($"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'", Globals.MysqlConnection);
+				
+				DataTable tb = new DataTable();
+				/* выполняем запрос */
+				using (MySqlDataReader MysqlDataReader = MysqlQuery.ExecuteReader())
+				{
+					tb.Load(MysqlDataReader);
+				}//эта конструкция автоматически закрывает ридер
 
-                /* задаем запрос для базы данных */
-                Globals.MysqlQuery.CommandText = $"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'";
-                /* выполняем запрос */
+				if (tb.Rows.Count == 0)
+				{
+					MessageBox.Show("Неверный логин или пароль");
+					return;
+				}
+				int userid = (int)tb.Rows[0][0];
+				Globals.MysqlLog(userid, "Вход");
 
-                Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
+				DashboardForm form = new DashboardForm(login, userid);
 
-                DataTable tb = new DataTable();
-                /* загружаем данные из sql ридера в наш класс */
-                tb.Load(Globals.MysqlDataReader);
-
-                if (tb.Rows.Count == 1)
-                {
-                    int user_id = (int)tb.Rows[0][0];
-
-
-                    Globals.MysqlDataReader.Close();
-                    //MessageBox.Show("Авторизация успешна");
-                    Globals.MysqlQuery.CommandText = $"insert into logs (time,user_id,event) values (NOW(),'{user_id}','Вход');";
-                    int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
-                    //mainForm.command.Parameters.Clear();
-                    if (rowsAffected == 0)
-                    {
-                        MessageBox.Show("Ошибка логирования, попробуйте еще раз пизда");
-                    }
-                    else
-                    {
-
-                        /* создаем экемпляр формы*/
-                        DashboardForm form = new DashboardForm(login, user_id);
-
-                        /* прячем окно авторизации */
-                        this.Hide();
-
-                        /* показываем новую форму. как только новое окно закроется, управление 
-                         * передастся на this.Show(); */
-                        form.ShowDialog();
-                        this.Show();
-                    }
-
-                }
-                /* закрываем эту, она нам пока больше не нужна */
-
-                else
-                {
-                    MessageBox.Show("Неверный логин или пароль");
-                    Globals.MysqlDataReader.Close();
-                }
-
-
-
-
-                }
-            catch (MySqlException ex)
-            {
-                MessageBox.Show("Ошибка: " + ex.ToString());
-            }
+				this.Hide();
+				/* показываем новую форму. как только новое окно закроется, управление 
+                       * передастся на this.Show(); */
+				form.ShowDialog();
+				this.Show();
+			}
+			catch (MySqlException ex)
+			{
+				MessageBox.Show("Ошибка: " + ex.ToString());
+			}
         }
-
 
         private void buttonOpenRegisterForm_Click(object sender, EventArgs e)
         {
@@ -100,21 +69,11 @@ namespace wstest
             RegForm form = new RegForm();
             form.ShowDialog();
             this.Show();
-            
         }
-
         private async void buttonMysqlConnect_Click(object sender, EventArgs e)
         {
             try
             {
-
-				/*
-				 * проверка на необходимость сохранения пароля в хранилище
-				 * что бы не вводить пароль от mysql каждый раз
-				 * когда форма запускается, срабатывает обработчик Form.OnLoad,
-				 * который считывает пароль из хранилища и вводит его в поле автоматически
-				 */
-
 				if (checkBoxNeedToRemember.Checked)
 				{
 					//кладем значение из поля в хранилище по ключу
@@ -123,24 +82,14 @@ namespace wstest
 					Properties.Settings.Default.Save();
 				}
 
+				MySqlConnectionStringBuilder MysqlConnectionSettings = new MySqlConnectionStringBuilder();
+				MysqlConnectionSettings.Server = HomeMode ? "192.168.10.7" : "vpn.thecooler.ru"; //это нужно для меня, потом объясню почему и что это
+				MysqlConnectionSettings.UserID = "cooler";
+				MysqlConnectionSettings.Database = "ws";
+				MysqlConnectionSettings.Password = textBoxMysqlPass.Text;
+				MysqlConnectionSettings.CharacterSet = "utf8";
 
-				/*
-                 * подключение к бд. 
-                 * создаем экземпляр MySqlConnection, через который мы будем взаимодействовать в бд
-                 * передаем туда наши настройки в виде экземпляра MySqlConnectionStringBuilder.
-				 * его же мы настраиваем, выдавая значение каждому параметру отдельно.
-				 * это более наглядно и удобно, посравнению со старым способом в виде обычной строки
-                 */
-
-				Globals.MysqlConnectionSettings = new MySqlConnectionStringBuilder();
-				Globals.MysqlConnectionSettings.Server = HomeMode ? "192.168.10.7" : "vpn.thecooler.ru"; //это нужно для меня, потом объясню почему и что это
-				Globals.MysqlConnectionSettings.UserID = "cooler";
-				Globals.MysqlConnectionSettings.Database = "ws";
-				Globals.MysqlConnectionSettings.Password = textBoxMysqlPass.Text;
-				Globals.MysqlConnectionSettings.CharacterSet = "utf8";
-
-
-				Globals.MysqlConnection = new MySqlConnection(Globals.MysqlConnectionSettings.ToString());
+				Globals.MysqlConnection = new MySqlConnection(MysqlConnectionSettings.ToString());
                 /* открываем соединение */
                 this.buttonMysqlConnect.Text = "Соединяемся с бд...";
                 /* выполняем подключение асинхронно, что бы не блокировать
@@ -149,16 +98,8 @@ namespace wstest
                 await Globals.MysqlConnection.OpenAsync();
                 this.buttonMysqlConnect.Text = "Соединение с бд установлено!";
                 
-
-                //создаем экземпляр MySqlCommand. он тоже нужен для нашей работы. 
-                //первый параметр: запрос к бд(в данном случае примитивный, который ничего не делает)
-                //второй: экземпляр соединения с бд
-                Globals.MysqlQuery = new MySqlCommand("select 1", Globals.MysqlConnection);
-                
-                /* делаем кнопки авторизации и регистрации доступными для нажатия */
                 buttonLogin.Enabled = true;
                 buttonOpenRegisterForm.Enabled = true;
-                //MessageBox.Show("Успех");
             }
             catch (MySqlException ex) //ловим исключение от mysql
             {
@@ -171,15 +112,6 @@ namespace wstest
 				this.buttonMysqlConnect.Text = "Подключиться не удалось, попробуйте снова";
 				MessageBox.Show("Ошибка: " + ex.ToString());
 			}
-            finally
-            {
-                //в этом блоке описывается код, который выполнится в любом случае, после отлова исключения, или успешного выполнения
-                //нам пока не нужно выполнять тут код
-            }
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
 
         }
 
@@ -204,7 +136,6 @@ namespace wstest
 				this.Text =  this.Text.Replace(" / server at: 192.168.10.7", "");
 				HomeMode = false;
 			}
-
 		}
     }
 }

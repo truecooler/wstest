@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient;
 
 namespace wstest
 {
@@ -22,20 +23,9 @@ namespace wstest
         }
         private void button1_Click(object sender, EventArgs e)
         {
-                Globals.MysqlQuery.CommandText = $"insert into logs (time,user_id,event) values (NOW(),'{this.user_id}','Выход');";
-                int rowsAffected = Globals.MysqlQuery.ExecuteNonQuery();
-                if (rowsAffected == 0)
-                {
-                    MessageBox.Show("Ошибка выхода, попробуйте еще раз");
-                }
-                else
-                {    //обработчик кнопки выхода с аккаунта
-                    //просто создаем новую форму авторизации, и закрываем текущее окно
-                    this.Close();
-                }
+			Globals.MysqlLog(this.user_id, "Выход");
+            this.Close();   
         }
-
-
 
         private void DashboardForm_Load(object sender, EventArgs e)
         {
@@ -44,18 +34,14 @@ namespace wstest
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Globals.MysqlQuery.CommandText = "SELECT * FROM users;";
-            Globals.MysqlDataReader = Globals.MysqlQuery.ExecuteReader();
+            MySqlCommand MysqlQuery = new MySqlCommand("SELECT * FROM users",Globals.MysqlConnection);
 
-            /* создаем класс, в котором мы будем хранить принятую таблицу от базы 
-             * (база данных всегда возвращает запрос ввиде новой таблицы) */
-            DataTable tb = new DataTable();
-            /* загружаем данные из sql ридера в наш класс */
-            tb.Load(Globals.MysqlDataReader);
-            /* задаем элементу dataGridView на форме данные, который хранит в себе новоиспеченный DataTable */
-            this.dataGridView1.DataSource = tb;
-            //каждый раз, работая с ридером, его нужно закрывать
-            Globals.MysqlDataReader.Close();
+			using (MySqlDataReader MysqlDataReader = MysqlQuery.ExecuteReader())
+			{
+				DataTable tb = new DataTable();
+				tb.Load(MysqlDataReader);
+				this.dataGridView1.DataSource = tb;
+			}
         }
     }
 }

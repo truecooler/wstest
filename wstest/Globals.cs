@@ -10,9 +10,19 @@ namespace wstest
 {
     static class Globals
     {
-		static public MySqlConnectionStringBuilder MysqlConnectionSettings = null;
 		static public MySqlConnection MysqlConnection = null;
-        static public MySqlCommand MysqlQuery = null;
-        static public MySqlDataReader MysqlDataReader = null;
+
+		static public void MysqlLog(int userid,string type)
+		{
+			MySqlCommand MysqlQuery = new MySqlCommand($"insert into logs (time,user_id,event) values (NOW(),'{userid}','Вход');", MysqlConnection);
+
+			int rowsAffected = MysqlQuery.ExecuteNonQuery();
+
+			if (rowsAffected == 0)
+			{
+				MessageBox.Show("Ошибка логирования пизда");
+				return;
+			}
+		}
     }
 }
