@@ -33,6 +33,9 @@ namespace wstest
 
 				/* задаем запрос для базы данных */
 				MySqlCommand MysqlQuery = new MySqlCommand($"SELECT* FROM users WHERE name = '{login}' AND password = '{password}'", Globals.MysqlConnection);
+                string position = "";
+                
+                
 				
 				DataTable tb = new DataTable();
 				/* выполняем запрос */
@@ -47,9 +50,11 @@ namespace wstest
 					return;
 				}
 				int userid = (int)tb.Rows[0][0];
+                position = (string)tb.Rows[0][4];
 				Globals.MysqlLog(userid, "Вход");
-
-				DashboardForm form = new DashboardForm(login, userid);
+                Globals.MySQLsetOnline(userid, 1);
+                DashboardForm form = new DashboardForm(login, userid, position);
+          
 
 				this.Hide();
 				/* показываем новую форму. как только новое окно закроется, управление 
