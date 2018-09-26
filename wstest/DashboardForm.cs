@@ -29,21 +29,27 @@ namespace wstest
             this.Close();   
         }
 
+
+
         private void DashboardForm_Load(object sender, EventArgs e)
         {
-            //обработчик загрузки формы
-        }
+			
+		}
 
-   //     private void button2_Click(object sender, EventArgs e)
-   //     {
-   //         MySqlCommand MysqlQuery = new MySqlCommand("SELECT * FROM users",Globals.MysqlConnection);
+		private void DashboardForm_Click(object sender, EventArgs e)
+		{
+		}
 
-			//using (MySqlDataReader MysqlDataReader = MysqlQuery.ExecuteReader())
-			//{
-			//	DataTable tb = new DataTable();
-			//	tb.Load(MysqlDataReader);
-			//	this.dataGridView1.DataSource = tb;
-			//}
-   //     }
-    }
+		//     private void button2_Click(object sender, EventArgs e)
+		//     {
+		//         MySqlCommand MysqlQuery = new MySqlCommand("SELECT * FROM users",Globals.MysqlConnection);
+
+		//using (MySqlDataReader MysqlDataReader = MysqlQuery.ExecuteReader())
+		//{
+		//	DataTable tb = new DataTable();
+		//	tb.Load(MysqlDataReader);
+		//	this.dataGridView1.DataSource = tb;
+		//}
+		//     }
+	}
 }
